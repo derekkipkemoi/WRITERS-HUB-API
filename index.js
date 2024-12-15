@@ -1,45 +1,48 @@
-const express = require('express');
-const mongoose = require('mongoose');
-var bodyParser = require('body-parser')
-const path = require('path');
-var cors = require('cors')
-const app = express();
-const dotenv = require('dotenv');
+const express = require("express");
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+const path = require("path");
+const cors = require("cors");
+const dotenv = require("dotenv");
 
-// Load environment variables from a .env file
+// Load environment variables from .env file
 dotenv.config();
 
-const PORT = process.env.SERVER_PORT 
-const HOST = process.env.SERVER_HOST
+const app = express();
+const PORT = process.env.SERVER_PORT || 3010;
+const HOST = process.env.SERVER_HOST || "localhost";
 
+// Serve static files from 'uploads' folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// MongoDB connection URL
+const mongoURL = process.env.MONGO_URL;
 
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Connect to MongoDB
+mongoose
+  .connect(mongoURL)
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("MongoDB connection error:", error);
+    process.exit(1); // Exit the process if MongoDB connection fails
+  });
 
+// Middleware
+app.use(bodyParser.json());
+app.use(cors());
 
-const url = "mongodb://localhost:27017/cv_garage_db"; // Replace with your MongoDB connection URL
-mongoose.connect(url);
-const con = mongoose.connection;
-try {
-    con.on('open', () => {
-        console.log('Connected to the database');
+// Routes
+const users = require("./routes/users");
+app.use("/users", users);
 
-        app.use(bodyParser.json());
-        app.use(cors())
+// Default route
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 
-        //Routes
-        const users = require('./routes/users')
-        app.use('/users', users)
-
-        app.get('/', (req, res) => {
-            res.send('Hello World!');
-        });
-
-        app.listen(PORT, HOST, () => {
-            console.log(`Server is running on http://${HOST}:${PORT}`);
-        });
-    })
-} catch (error) {
-    console.log("Error: " + error);
-}
-
+// Start the server
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running on http://${HOST}:${PORT}`);
+});

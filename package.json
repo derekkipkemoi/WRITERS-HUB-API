@@ -1,11 +1,12 @@
 {
-  "name": "CVGARAGEAPI",
+  "name": "WRITERS-HUB-API",
   "version": "1.0.0",
   "description": "\"Backed API for CV Garage\"",
   "main": "index.js",
   "author": "Derrick",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "index.js",
     "start": "nodemon index.js"
   },
   "license": "MIT",

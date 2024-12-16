@@ -10,7 +10,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.SERVER_PORT || 3010;
-const HOST = process.env.SERVER_HOST || "localhost";
 
 // Serve static files from 'uploads' folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -43,6 +42,6 @@ app.get("/", (req, res) => {
 });
 
 // Start the server
-app.listen(PORT, HOST, () => {
-  console.log(`Server is running on http://${HOST}:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
